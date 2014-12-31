@@ -66,7 +66,7 @@ int ldapBind(LDAP *ld)
   return 0;
 }
 
-int ldapModLoglevel(LDAP ld)
+int ldapModLoglevel(LDAP *ld, char level)
 {
   LDAPMod mod;
   LDAPMod *mods[2];
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
   }
 
   /* loglevelの変更 */
-  if (ldapModLoglevel(ld)) {
+  if (ldapModLoglevel(ld, level)) {
     ldap_perror(ld, "ldap_modify_ext_s");
     return 1;
   }
