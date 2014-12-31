@@ -110,6 +110,7 @@ int main(int argc, char* argv[])
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
   }
+  printf("%s\n", argv);
   printf("%d\n", checkArgs(argv));
   if (checkArgs(argv)) {
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
