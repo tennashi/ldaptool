@@ -2,11 +2,10 @@
 #include <ldap.h>
 #include <math.h>
 
-int checkArgs(int* args)
+int checkArgs(int length, char* args)
 {
   int i;
   float n;
-  int length = sizeof(args) / sizeof(args[0]);
   printf("%d\n", length);
   for (i = 1; i < length; i++) {
     n = atof(args[i]);
@@ -31,11 +30,10 @@ int checkArgs(int* args)
   return 0;
 }
 
-int sumArgs(int* args) {
+int sumArgs(int length, char* args) {
   int sum = 0;
   int i;
   int n;
-  int length = sizeof(args) / sizeof(args[0]);
   for (i = 1; i < length; i++) {
     n = atoi(args[i]);
     sum = sum + (int)n;
@@ -111,15 +109,15 @@ int main(int argc, char* argv[])
     return 1;
   }
   printf("%s\n", argv);
-  printf("%d\n", checkArgs(argv));
-  if (checkArgs(argv)) {
+  printf("%d\n", checkArgs(argc, argv));
+  if (checkArgs(argc, argv)) {
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
   }
 
   /* loglevel を計算 */
   char level[6];
-  sprintf(level, "%d", sumArgs(argv));
+  sprintf(level, "%d", sumArgs(argc, argv));
 
 
 
