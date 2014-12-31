@@ -39,7 +39,7 @@ int sumArgs(int *args) {
   }
 }
 
-LDAP ldapConnection()
+LDAP* ldapConnection()
 {
   LDAP *ld;
   ld = ldap_init("localhost", LDAP_PORT);
