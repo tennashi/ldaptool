@@ -129,19 +129,19 @@ int main(int argc, char* argv[])
   }
 
   /* ユーザ DN cn=config でバインド */
-  if (ldapBind(*ld)) {
+  if (ldapBind(ld)) {
     ldap_perror(ld, "ldap_simple_bind_s");
     return 1;
   }
 
   /* loglevelの変更 */
-  if (ldapModLoglevel(*ld, level)) {
+  if (ldapModLoglevel(ld, level)) {
     ldap_perror(ld, "ldap_modify_ext_s");
     return 1;
   }
 
   /* アンバインド */
-  if (ldapUnbind(*ld)) {
+  if (ldapUnbind(ld)) {
     ldap_perror(ld, "ldap_unbind_ext_s");
     return 1;
   }
