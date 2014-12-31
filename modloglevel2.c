@@ -39,12 +39,12 @@ int sumArgs(int[] args) {
   }
 }
 
-int ldapConnection()
+LDAP ldapConnection()
 {
   LDAP *ld;
   ld = ldap_init("localhost", LDAP_PORT);
   if (ld == NULL) {
-    return 1;
+    return ld;
   }
 
   char *url = "ldapi:///";
@@ -53,43 +53,21 @@ int ldapConnection()
   int version = LDAP_VERSION3;
   ldap_set_option(ld, LDAP_OPT_PROTOCOL_VERSION, &version);
 
+  return ld;
+}
+
+int ldapBind(LDAP ld)
+{
+  int status;
+  status = ldap_simple_bind_s(ld, "cn=config", "secret");
+  if (status != LDAP_SUCCESS) {
+    return 1;
+  }
   return 0;
 }
 
-
-int main(int argc, char* argv[])
+int ldapModLoglevel(LDAP ld)
 {
-  int i;
-  float n;
-  /* 引数を判定 */
-  if (argc < 2) {
-    fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下", argv[0]);
-  }
-  if (checkArgs(argv)) {
-    fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下", argv[0]);
-  }
-
-  /* loglevel を計算 */
-  char level[6];
-  sprintf(level, "%d", sumArgs(argv));
-
-
-  printf("loglevel is %s\n", level);
-
-  /* セッションハンドルの取得 */
-  if (ldapConnection()) {
-    perror("ldap_init");
-  }
-
-  /* ユーザ DN cn=config でバインド */
-  int statusb;
-  statusb = ldap_simple_bind_s(ld, "cn=config", "secret");
-  if (statusb != LDAP_SUCCESS) {
-    ldap_perror(ld, "ldap_simple_bind_s");
-    return 1;
-  }
-
-  /* loglevelの変更 */
   LDAPMod mod;
   LDAPMod *mods[2];
   char *vals[2];
@@ -103,18 +81,67 @@ int main(int argc, char* argv[])
   mods[0] = &mod;
   mods[1] = NULL;
 
-  /* 更新操作 */
-  int statusm;
-  statusm = ldap_modify_ext_s(ld, "cn=config", mods, NULL, NULL);
-  if (statusm != LDAP_SUCCESS) {
+  int status;
+  status = ldap_modify_ext_s(ld, "cn=config", mods, NULL, NULL);
+  if (status != LDAP_SUCCESS) {
+    return 1;
+  }
+  return 0;
+}
+
+int ldapUnbind(LDAP ld)
+{
+  int status;
+  status = ldap_unbind_ext_s(ld, NULL, NULL);
+  if (status != LDAPSUCCESS) {
+    return 1;
+  }
+  return 0;
+}
+
+
+int main(int argc, char* argv[])
+{
+  int i;
+  float n;
+  /* 引数を判定 */
+  if (argc < 2) {
+    fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下", argv[0]);
+    return 1;
+  }
+  if (checkArgs(argv)) {
+    fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下", argv[0]);
+    return 1;
+  }
+
+  /* loglevel を計算 */
+  char level[6];
+  sprintf(level, "%d", sumArgs(argv));
+
+
+  printf("loglevel is %s\n", level);
+
+  /* セッションハンドルの取得 */
+  LDAP ld = ldapConnection();
+  if (ld == NULL) {
+    perror("ldap_init");
+    return 1;
+  }
+
+  /* ユーザ DN cn=config でバインド */
+  if (ldapBind(ld)) {
+    ldap_perror(ld, "ldap_simple_bind_s");
+    return 1;
+  }
+
+  /* loglevelの変更 */
+  if (ldapModLoglevel(ld)) {
     ldap_perror(ld, "ldap_modify_ext_s");
     return 1;
   }
 
   /* アンバインド */
-  int c;
-  c = ldap_unbind_ext_s(ld, NULL, NULL);
-  if (c != 0) {
+  if (ldapUnbind(ld)) {
     ldap_perror(ld, "ldap_unbind_ext_s");
     return 1;
   }
