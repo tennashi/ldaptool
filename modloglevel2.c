@@ -2,7 +2,7 @@
 #include <ldap.h>
 #include <math.h>
 
-int checkArgs(int* args[])
+int checkArgs(int* args)
 {
   int i;
   float n;
@@ -28,7 +28,7 @@ int checkArgs(int* args[])
   return 0;
 }
 
-int sumArgs(int* args[]) {
+int sumArgs(int* args) {
   int sum = 0;
   int i;
   int n;
