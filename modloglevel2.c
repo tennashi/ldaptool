@@ -2,14 +2,12 @@
 #include <ldap.h>
 #include <math.h>
 
-int checkArgs(int length, char* args)
+int checkArgs(int length, char* argv)
 {
   int i;
   float n;
-  printf("%d\n", length);
   for (i = 1; i < length; i++) {
-    n = atof(args[i]);
-    printf("%f\n", n);
+    n = atof(argv[i]);
     if (n > 32768) {
       return 1;
     }
@@ -21,7 +19,6 @@ int checkArgs(int length, char* args)
         break;
       }
       n = n / 2;
-      printf("%f\n", n);
       if (n < 1) {
         return 1;
       }
@@ -30,13 +27,13 @@ int checkArgs(int length, char* args)
   return 0;
 }
 
-int sumArgs(int length, char* args) {
+int sumArgs(int length, char* argv) {
   int sum = 0;
   int i;
   int n;
   for (i = 1; i < length; i++) {
-    n = atoi(args[i]);
-    sum = sum + (int)n;
+    n = atoi(argv[i]);
+    sum = sum + n;
   }
 }
 
@@ -108,7 +105,7 @@ int main(int argc, char* argv[])
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
   }
-  printf("%s\n", argv);
+  printf("%s\n", argv[1]);
   printf("%d\n", checkArgs(argc, argv));
   if (checkArgs(argc, argv)) {
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
