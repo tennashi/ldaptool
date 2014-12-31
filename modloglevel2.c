@@ -89,7 +89,7 @@ int ldapModLoglevel(LDAP *ld, char level)
   return 0;
 }
 
-int ldapUnbind(LDAP ld)
+int ldapUnbind(LDAP *ld)
 {
   int status;
   status = ldap_unbind_ext_s(ld, NULL, NULL);
