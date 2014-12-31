@@ -8,7 +8,7 @@ int checkArgs(int* args)
   float n;
   int length = sizeof args / args[0];
   printf("%d\n", length);
-  for (i = 0; i < length; i++) {
+  for (i = 1; i < length; i++) {
     n = atof(args[i]);
     printf("%f\n", n);
     if (n > 32768) {
@@ -36,7 +36,7 @@ int sumArgs(int* args) {
   int i;
   int n;
   int length = sizeof args / args[0];
-  for (i = 0; i < length; i++) {
+  for (i = 1; i < length; i++) {
     n = atoi(args[i]);
     sum = sum + (int)n;
   }
