@@ -39,12 +39,12 @@ int sumArgs(int *args) {
   }
 }
 
-LDAP* ldapConnection()
+LDAP *ldapConnection()
 {
   LDAP *ld;
   ld = ldap_init("localhost", LDAP_PORT);
   if (ld == NULL) {
-    return *ld;
+    return ld;
   }
 
   char *url = "ldapi:///";
@@ -53,7 +53,7 @@ LDAP* ldapConnection()
   int version = LDAP_VERSION3;
   ldap_set_option(ld, LDAP_OPT_PROTOCOL_VERSION, &version);
 
-  return *ld;
+  return ld;
 }
 
 int ldapBind(LDAP *ld)
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
   printf("loglevel is %s\n", level);
 
   /* セッションハンドルの取得 */
-  LDAP ld = ldapConnection();
+  LDAP *ld = ldapConnection();
   if (ld == NULL) {
     perror("ldap_init");
     return 1;
