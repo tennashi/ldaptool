@@ -44,7 +44,7 @@ LDAP* ldapConnection()
   LDAP *ld;
   ld = ldap_init("localhost", LDAP_PORT);
   if (ld == NULL) {
-    return ld;
+    return *ld;
   }
 
   char *url = "ldapi:///";
@@ -53,7 +53,7 @@ LDAP* ldapConnection()
   int version = LDAP_VERSION3;
   ldap_set_option(ld, LDAP_OPT_PROTOCOL_VERSION, &version);
 
-  return ld;
+  return *ld;
 }
 
 int ldapBind(LDAP *ld)
