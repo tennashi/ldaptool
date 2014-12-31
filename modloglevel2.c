@@ -107,6 +107,7 @@ int main(int argc, char* argv[])
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
   }
+  printf("%d\n", checkArgs(argv));
   if (checkArgs(argv)) {
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
@@ -117,7 +118,6 @@ int main(int argc, char* argv[])
   sprintf(level, "%d", sumArgs(argv));
 
 
-  printf("loglevel is %s\n", level);
 
   /* セッションハンドルの取得 */
   LDAP *ld = ldapConnection();
@@ -137,6 +137,7 @@ int main(int argc, char* argv[])
     ldap_perror(ld, "ldap_modify_ext_s");
     return 1;
   }
+  printf("loglevel is %s\n", level);
 
   /* アンバインド */
   if (ldapUnbind(ld)) {
