@@ -93,7 +93,7 @@ int ldapUnbind(LDAP *ld)
 {
   int status;
   status = ldap_unbind_ext_s(ld, NULL, NULL);
-  if (status != LDAPSUCCESS) {
+  if (status != LDAP_SUCCESS) {
     return 1;
   }
   return 0;
