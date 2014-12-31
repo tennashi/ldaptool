@@ -7,8 +7,10 @@ int checkArgs(int* args)
   int i;
   float n;
   int length = sizeof args / args[0];
+  printf("%d\n", length);
   for (i = 0; i < length; i++) {
     n = atof(args[i]);
+    printf("%f\n", n);
     if (n > 32768) {
       return 1;
     }
@@ -20,6 +22,7 @@ int checkArgs(int* args)
         break;
       }
       n = n / 2;
+      printf("%f\n", n);
       if (n < 1) {
         return 1;
       }
