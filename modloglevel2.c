@@ -2,13 +2,13 @@
 #include <ldap.h>
 #include <math.h>
 
-int checkArgs(int *args)
+int checkArgs(int* args[])
 {
   int i;
   float n;
   int length = sizeof args / args[0];
   for (i = 0; i < length; i++) {
-    n = atoi(args[i]);
+    n = atof(args[i]);
     if (n > 32768) {
       return 1;
     }
@@ -28,7 +28,7 @@ int checkArgs(int *args)
   return 0;
 }
 
-int sumArgs(int *args) {
+int sumArgs(int* args[]) {
   int sum = 0;
   int i;
   int n;
@@ -102,15 +102,13 @@ int ldapUnbind(LDAP *ld)
 
 int main(int argc, char* argv[])
 {
-  int i;
-  float n;
   /* 引数を判定 */
   if (argc < 2) {
-    fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下", argv[0]);
+    fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
   }
   if (checkArgs(argv)) {
-    fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下", argv[0]);
+    fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
   }
 
