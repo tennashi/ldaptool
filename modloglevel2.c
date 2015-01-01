@@ -5,9 +5,9 @@
 int checkArgs(int, char**);
 int sumArgs(int, char**);
 LDAP *ldapConnection(void);
-int ldapBind(LDAP *ld);
-int ldapModLoglevel(LDAP *ld, char*);
-int ldapUnbind(LDAP *ld);
+int ldapBind(LDAP*);
+int ldapModLoglevel(LDAP*, char*);
+int ldapUnbind(LDAP*);
 
 int main(int argc, char* argv[])
 {
