@@ -27,7 +27,8 @@ int main(int argc, char* argv[])
   sprintf(level, "%d", sumArgs(argc, argv));
 
   /* セッションハンドルの取得 */
-  LDAP *ld = ldapConnection();
+  LDAP *ld;
+  ld = ldapConnection();
   if (ld == NULL) {
     perror("ldap_init");
     return 1;
@@ -93,7 +94,7 @@ int sumArgs(int length, char* argv[]) {
 LDAP *ldapConnection(void)
 {
   LDAP *ld;
-  ld = &ldap_init("localhost", LDAP_PORT);
+  ld = ldap_init("localhost", LDAP_PORT);
   if (ld == NULL) {
     return ld;
   }
