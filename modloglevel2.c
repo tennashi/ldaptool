@@ -75,7 +75,7 @@ int checkArgs(int length, char* argv[])
         break;
       }
       n = n / 2;
-      printf("&f\n", n);
+      printf("%f\n", n);
       if (n < 1) {
         return 1;
       }
