@@ -17,15 +17,15 @@ int main(int argc, char* argv[])
     return 1;
   }
   printf("%s\n", argv[1]);
-  printf("%d\n", checkArgs(argc,&&argv));
-  if (checkArgs(argc, &&argv)) {
+  printf("%d\n", checkArgs(argc, &argv));
+  if (checkArgs(argc, &argv)) {
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
   }
 
   /* loglevel を計算 */
   char level[6];
-  sprintf(level, "%d", sumArgs(argc, &&argv));
+  sprintf(level, "%d", sumArgs(argc, &argv));
 
 
 
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   }
 
   /* loglevelの変更 */
-  if (ldapModLoglevel(ld, &level)) {
+  if (ldapModLoglevel(ld, level)) {
     ldap_perror(ld, "ldap_modify_ext_s");
     return 1;
   }
