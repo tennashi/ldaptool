@@ -62,8 +62,6 @@ int checkArgs(int length, char* argv[])
   float n;
   for (i = 1; i < length; i++) {
     n = atof(argv[i]);
-    printf("%s\n", argv[i]);
-    printf("%f\n", n);
     if (n > 32768) {
       return 1;
     }
@@ -75,7 +73,6 @@ int checkArgs(int length, char* argv[])
         break;
       }
       n = n / 2;
-      printf("%f\n", n);
       if (n < 1) {
         return 1;
       }
@@ -90,10 +87,9 @@ int sumArgs(int length, char* argv[]) {
   int n;
   for (i = 1; i < length; i++) {
     n = atoi(argv[i]);
-    printf("%d\n", n);
     sum = sum + n;
-    printf("%d\n", sum);
   }
+  return sum;
 }
 
 LDAP *ldapConnection(void)
