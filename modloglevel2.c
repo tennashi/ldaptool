@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <ldap.h>
 #include <math.h>
 
@@ -62,8 +63,7 @@ int checkArgs(int length, char* argv[])
   int i;
   float n;
   for (i = 1; i < length; i++) {
-   // n = atof(argv[i]);
-    n = atof("3");
+    n = atof(argv[i]);
     printf("%s\n", argv[i]);
     printf("%f\n", n);
     if (n > 32768) {
