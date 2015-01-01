@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
   }
   printf("%s\n", argv[1]);
   printf("%d\n", checkArgs(argc, argv));
-  if (checkArgs(argc, argv[])) {
+  if (checkArgs(argc, argv)) {
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
   }
