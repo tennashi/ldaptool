@@ -9,7 +9,7 @@ int ldapBind(LDAP *ld);
 int ldapModLoglevel(LDAP *ld, char*);
 int ldapUnbind(LDAP *ld);
 
-int main(int argc, char* argv)
+int main(int argc, char* argv[])
 {
   /* 引数を判定 */
   if (argc < 2) {
@@ -17,7 +17,7 @@ int main(int argc, char* argv)
     return 1;
   }
   printf("%s\n", argv[1]);
-  printf("%d\n", checkArgs(argc, argv));
+  printf("%d\n", checkArgs(argc, argv[]));
   if (checkArgs(argc, argv)) {
     fprintf(stderr, "使い方: %s n m ...\n n, m,... は -1 か 2 のべき乗で 32768以下\n", argv[0]);
     return 1;
@@ -25,7 +25,7 @@ int main(int argc, char* argv)
 
   /* loglevel を計算 */
   char level[6];
-  sprintf(level, "%d", sumArgs(argc, argv));
+  sprintf(level, "%d", sumArgs(argc, argv[]));
 
 
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv)
   return 0;
 }
 
-int checkArgs(int length, char* argv)
+int checkArgs(int length, char* argv[])
 {
   int i;
   float n;
@@ -82,7 +82,7 @@ int checkArgs(int length, char* argv)
   return 0;
 }
 
-int sumArgs(int length, char* argv) {
+int sumArgs(int length, char* argv[]) {
   int sum = 0;
   int i;
   int n;
