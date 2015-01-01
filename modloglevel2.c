@@ -28,8 +28,6 @@ int main(int argc, char* argv[])
   char level[6];
   sprintf(level, "%d", sumArgs(argc, argv));
 
-
-
   /* セッションハンドルの取得 */
   LDAP *ld = ldapConnection();
   if (ld == NULL) {
@@ -92,7 +90,9 @@ int sumArgs(int length, char* argv[]) {
   int n;
   for (i = 1; i < length; i++) {
     n = atoi(argv[i]);
+    printf("%d\n", n);
     sum = sum + n;
+    printf("%d\n", sum);
   }
 }
 
