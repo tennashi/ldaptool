@@ -9,7 +9,7 @@ int ldapBind(LDAP *ld);
 int ldapModLoglevel(LDAP *ld, char*);
 int ldapUnbind(LDAP *ld);
 
-int main(int argc, char* argv[])
+int main(int argc, char* argv)
 {
   /* 引数を判定 */
   if (argc < 2) {
