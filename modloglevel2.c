@@ -62,7 +62,8 @@ int checkArgs(int length, char* argv[])
   int i;
   float n;
   for (i = 1; i < length; i++) {
-    n = atof(argv[i]);
+   // n = atof(argv[i]);
+    n = atof("3");
     printf("%s\n", argv[i]);
     printf("%f\n", n);
     if (n > 32768) {
