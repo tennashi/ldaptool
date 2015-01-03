@@ -95,7 +95,7 @@ int sumArgs(int length, char* argv[]) {
 LDAP *ldapConnection(void)
 {
   LDAP *ld;
-  ld = ldap_init("localhost", LDAP_PORT);
+  ld = &ldap_init("localhost", LDAP_PORT);
   if (ld == NULL) {
     return ld;
   }
