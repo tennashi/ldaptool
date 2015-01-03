@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 
   /* セッションハンドルの取得 */
   LDAP *ld;
-  ld = ldapConnection();
+  ld = (LDAP*)ldapConnection();
   if (ld == NULL) {
     perror("ldap_init");
     return 1;
