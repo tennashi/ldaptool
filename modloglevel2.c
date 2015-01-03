@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 
   /* セッションハンドルの取得 */
   LDAP *ld;
-  ld = (LDAP*)ldapConnection();
+  ld = ldapConnection();
   if (ld == NULL) {
     perror("ldap_init");
     return 1;
@@ -94,7 +94,7 @@ int sumArgs(int length, char* argv[]) {
 LDAP *ldapConnection(void)
 {
   LDAP *ld;
-  ld = ldap_init("localhost", LDAP_PORT);
+  ld = (LDAP*)ldap_init("localhost", LDAP_PORT);
   if (ld == NULL) {
     return ld;
   }
