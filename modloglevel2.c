@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <lber.h>
 #include <ldap.h>
 #include <math.h>
 
@@ -94,7 +95,7 @@ int sumArgs(int length, char* argv[]) {
 LDAP *ldapConnection(void)
 {
   LDAP *ld;
-  ld = (LDAP*)ldap_init("localhost", LDAP_PORT);
+  ld = ldap_init("localhost", LDAP_PORT);
   if (ld == NULL) {
     return ld;
   }
