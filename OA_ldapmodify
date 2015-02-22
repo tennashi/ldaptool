@@ -1,0 +1,196 @@
+#!/usr/bin/ruby -K
+
+require 'tempfile'
+require 'optparse'
+require 'base64'
+
+LDAPBASE = "dc=math,dc=kyoto-u,dc=ac,dc=jp"
+LDAPADMIN = "cn=Manager,#{LDAPBASE}"
+LDAPOPTIONS = "-W -D #{LDAPADMIN}"
+
+REPLACEABLE_TYPES = [:cn, :sn, :givenName, :loginShell, :gecos, :displayName]
+
+$config = {}
+
+$opts = OptionParser.new
+$opts.on('-c', '--command=COMMAND', "sub command: add, remove, chsh, replace") do |command|
+	set_mode command
+end
+$opts.on('-g', '--group=GROUP_CN', "group to modify") do |group|
+	$config[:group] = group
+end
+$opts.on('-u', '--user=UID', "user to add or remove") do |user|
+	$config[:user] = user
+end
+$opts.on('-s', '--shell=SHELL', "login shell to replace by") do |shell|
+	$config[:loginShell] = shell
+end
+$opts.on('--cn=CN', "common name to replace by") do |cn|
+	$config[:cn] = cn
+end
+$opts.on('--sn=SN', "surname to replace by") do |sn|
+	$config[:sn] = sn
+end
+$opts.on('--given-name=GIVEN_NAME', "given name to replace by") do |given_name|
+	$config[:givenName] = given_name
+end
+$opts.on('--gecos=GECOS', "gecos to replace by") do |gecos|
+	$config[:gecos] = gecos
+end
+$opts.on('--display-name=DISPLAY_NAME', "display name to replace by") do |display_name|
+	$config[:displayName] = display_name
+end
+$opts.on('-j', '--japanese', "japanese mode; try to replace attribute;lang-ja") do
+	$config[:japanese] = true
+end
+$opts.on('-p', '--phonetic', "phonetic mode: try to replace attribute;phonetic") do
+    $config[:phonetic] = true
+end
+$opts.on('-v', '--verbose', "increase verbosity") do
+	$config[:verbose] = true
+end
+$opts.on('-l', '--ldif-only', "only output in LDIF file format") do
+	$config[:ldif] = true
+end
+$opts.on('-h', '--help', "show help message") do |group|
+	$config[:help] = true
+end 
+
+def set_mode(command)
+	case (command)
+	when 'add', 'add_to_group'
+		$config[:command] = :add_to_group
+	when 'remove', 'remove_from_group'
+		$config[:command] = :remove_from_group
+	when 'chsh', 'change_shell', 'replace'
+		$config[:command] = :replace
+	else
+		puts "No such command #{command}"
+	end
+end
+
+# --command
+# Parse abbreviated form for subcommand: "./OA_ldapmodify add ..."
+$opts.order!(ARGV)
+if (!ARGV.empty?) then
+	# Try to treat unknown option as a subcommand.
+	set_mode(ARGV.shift)
+	# Continue parsing
+	$opts.order!(ARGV)
+end
+
+def modify_impl(dn, subtype, attr_type, attr_val, ja = false, ph = false)
+	ldif = ''
+	ldif += "\# #{attr_type}: #{attr_val}\n" if $config[:verbose]
+	ldif += <<-EOLdif.gsub(/^\s*/, '')
+	dn: #{dn}
+	changetype: modify
+	#{subtype}: #{attr_type}#{ja ? ';lang-ja' : ''}#{ph ? ';phonetic' : ''}
+	#{attr_type}#{ja ? ';lang-ja' : ''}#{ph ? ';phonetic' : ''}#{ja ? ':' : ''}: #{ja ? Base64.encode64(attr_val) : attr_val}
+	EOLdif
+	# --ldif-only
+	if ($config[:ldif]) then
+		puts ldif
+		puts "\n"
+		return
+	end
+	Tempfile.open('oa') do |temp|
+		temp.puts ldif
+		temp.flush
+		cmd = "ldapmodify #{LDAPOPTIONS} -f #{temp.path}"
+		# --verbose
+		if ($config[:verbose]) then
+			puts "###### LDIF file --- ######"
+			puts ldif
+			puts "###### --- LDIF file ######"
+			puts cmd
+		end
+		system cmd
+	end
+end
+
+def add_to_group(user, group)
+	modify_impl("cn=#{group},ou=Group,#{LDAPBASE}", 'add', 'memberUid', user)
+end
+
+def remove_from_group(user, group)
+	modify_impl("cn=#{group},ou=Group,#{LDAPBASE}", 'delete', 'memberUid', user)
+end
+
+def replace(user, attr_type, attr_val)
+	modify_impl("uid=#{user},ou=People,#{LDAPBASE}", 'replace', attr_type, attr_val, $config[:japanese], $config[:phonetic])
+end
+
+def show_help(command=false)
+	if (command) then
+		case (command)
+		when :add_to_group
+			puts <<EOHelp
+Usage: OA_ldapmodify add -u UID -g GROUP_CN
+The add command adds the user into the group.
+
+EOHelp
+		when :remove_from_group
+			puts <<EOHelp
+Usage: OA_ldapmodify remove -u UID -g GROUP_CN
+The remove command removes the user from the group.
+
+EOHelp
+		when :replace
+			puts <<EOHelp
+Usage: OA_ldapmodify chsh -u UID -s SHELL
+The chsh command changes the user's login shell to SHELL.
+
+Usage: OA_ldapmodify replace -u UID [options]
+The replace command changes the user's attributes specified
+by options.
+
+EOHelp
+		puts $opts.to_s.split(/\n/).grep(/.*replace.*/).join("\n")
+		end
+	else
+		puts <<EOHelp
+The OA_ldapmodify script manages LDAP users and groups.
+You can specify one of sub commands: add, remove, chsh
+and replace. For more details about these commands,
+see the help.
+
+EOHelp
+		puts $opts
+	end
+end
+
+def check_option(*keys)
+	exit_flag = false
+	keys.each do |key|
+		unless ($config.has_key? key) then
+			STDERR.puts "Please specify #{key.to_s}."
+			exit_flag = true
+		end
+	end
+	exit if (exit_flag)
+end
+
+# --help
+if ($config[:help]) then
+	show_help $config[:command]
+	exit
+end
+
+# --command
+case ($config[:command])
+when :add_to_group
+	check_option :user, :group
+	add_to_group($config[:user], $config[:group])
+when :remove_from_group
+	check_option :user, :group
+	remove_from_group($config[:user], $config[:group])
+when :replace
+	check_option :user
+	REPLACEABLE_TYPES.each do |key|
+		replace($config[:user], key.to_s, $config[key]) if ($config.has_key? key)
+	end
+else
+	show_help
+end
+
